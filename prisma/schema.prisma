@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserDetails {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  fname          String
+  lname          String
+  userCredential UserCredential?
+  userRole       UserRole?
+  userStore      StoreDetails?
+  createdAt      DateTime        @default(now())
+}
+
+model UserCredential {
+  id          Int         @id @default(autoincrement())
+  password    String
+  username    String      @unique
+  userId      Int         @unique
+  userDetails UserDetails @relation(fields: [userId], references: [id])
+}
+
+model UserRole {
+  id          Int         @id @default(autoincrement())
+  roleId      Int         @unique
+  userId      Int         @unique
+  userDetails UserDetails @relation(fields: [userId], references: [id])
+  createdAt   DateTime    @default(now())
+}
+
+model Role {
+  id       Int    @id @default(autoincrement())
+  roleName String @unique
+}
+
+model StoreDetails {
+  id             Int             @id @default(autoincrement())
+  storeName      String
+  createdAt      DateTime        @default(now())
+  userId         Int             @unique
+  storeInventory StoreInventory?
+  userDetails    UserDetails     @relation(fields: [userId], references: [id])
+}
+
+model StoreInventory {
+  id               Int               @id @default(autoincrement())
+  storeId          Int               @unique
+  store            StoreDetails      @relation(fields: [storeId], references: [id])
+  inventoryProduct InventoryProduct?
+  createdAt        DateTime          @default(now())
+}
+
+model InventoryProduct {
+  id             Int            @id @default(autoincrement())
+  inventoryId    Int            @unique
+  storeInventory StoreInventory @relation(fields: [inventoryId], references: [id])
+  productDetails ProductDetails @relation(fields: [id], references: [id])
+}
+
+model ProductDetails {
+  id                 Int               @id @default(autoincrement())
+  productName        String
+  productDescription String
+  price              Float
+  image              String
+  createdAt          DateTime          @default(now())
+  inventoryProduct   InventoryProduct?
+  productQR          ProductQR?
+}
+
+model ProductQR {
+  id             Int            @id @default(autoincrement())
+  productId      Int            @unique
+  qrcode         String         @unique
+  productDetails ProductDetails @relation(fields: [productId], references: [id])
+  createdAt      DateTime       @default(now())
+}
