@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
+    app.setGlobalPrefix('api');
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true,          // strips properties not in DTO
       forbidNonWhitelisted: true, // throws error for unknown props
