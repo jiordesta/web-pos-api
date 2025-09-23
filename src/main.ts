@@ -12,7 +12,7 @@ async function bootstrap() {
       transform: true,          // auto-transform payloads into DTO classes
     }));
     app.enableCors({
-      origin: 'http://localhost:5173', // Replace with your frontend URL/port
+      origin: process.env.ENVIRONMENT === 'development' ? 'http://localhost:5173' : process.env.CORS_ORIGIN,
       credentials: true,
     });
     await app.listen(process.env.PORT || 3000, '0.0.0.0');
